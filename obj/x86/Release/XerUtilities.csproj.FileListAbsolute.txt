@@ -1,0 +1,6 @@
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Release\XerUtilities.dll
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Release\XerUtilities.pdb
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Release\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Release\XerUtilities.dll
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Release\XerUtilities.pdb
