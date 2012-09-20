@@ -115,6 +115,8 @@
     <Compile Include="Input\XerInput.cs" />
     <Compile Include="Input\XerKeyboardKeys.cs" />
     <Compile Include="Rendering\Camera2D.cs" />
+    <Compile Include="Rendering\Camera.cs" />
+    <Compile Include="Rendering\DeltaFreeCamera.cs" />
     <Compile Include="Rendering\PrimitiveBatch.cs" />
     <Compile Include="Scripting\AttrLuaFunc.cs" />
     <Compile Include="Scripting\IronPythonHost.cs" />

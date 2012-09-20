@@ -24,6 +24,7 @@ namespace XerUtilities.Input
         {
             this.keyboard = new XerKeyboard(game);
             this.mouse = new XerMouse(game);
+            game.Components.Add(this);
         }
 
         public XerInput(Game game, string cursorPath)
@@ -31,6 +32,7 @@ namespace XerUtilities.Input
         {
             this.keyboard = new XerKeyboard(game);
             this.mouse = new XerMouse(game,cursorPath);
+            game.Components.Add(this);
         }
 
         public override void  Update(GameTime gameTime)
@@ -112,6 +114,10 @@ namespace XerUtilities.Input
         public bool SpaceReleased { get { return prevKeyboardState.IsKeyDown(Keys.Space) && currKeyboardState.IsKeyUp(Keys.Space); } }
 
         public bool F1JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F1) && currKeyboardState.IsKeyDown(Keys.F1); } }
+
+        public bool F2JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F2) && currKeyboardState.IsKeyDown(Keys.F2); } }
+  
+        public bool F3JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F3) && currKeyboardState.IsKeyDown(Keys.F3); } }
 
         //States
         public KeyboardState PreviousState { get { return prevKeyboardState; } }
