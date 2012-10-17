@@ -4,3 +4,12 @@ C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\ResolveAssemblyRefer
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.dll
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.pdb
+C:\Users\Qu\Dropbox\Projects\XerUtilities\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Qu\Dropbox\Projects\XerUtilities\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Qu\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.dll
+C:\Users\Qu\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.pdb
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\IronPython.dll
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\Microsoft.CSharp.dll
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\Microsoft.Dynamic.dll
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\Microsoft.Scripting.dll
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\IronPython.xml

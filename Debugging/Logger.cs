@@ -8,7 +8,6 @@ namespace XerUtilities.Debugging
 {
     public static class Logger
     {
-        static bool initialized = false;
         static Dictionary<string, StreamWriter> writers = new Dictionary<string, StreamWriter>();
         public static void Write(string fileName, string msgName, string msg)
         {
@@ -40,8 +39,12 @@ namespace XerUtilities.Debugging
         {
             foreach (StreamWriter write in writers.Values)
             {
-                write.Flush();
-                write.Close();
+                try
+                {
+                    write.Flush();
+                    write.Close();
+                }
+                catch { }
             }
         }
     }

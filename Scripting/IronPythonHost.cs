@@ -54,7 +54,7 @@ namespace XerUtilities.Scripting
         {
             pySource = pyEngine.CreateScriptSourceFromString(code,SourceCodeKind.InteractiveCode);
             object output = pySource.Execute(pyScope);
-            if (output != null) Console.Echo(pyEngine.Operations.GetCodeRepresentation(output));
+            if (output != null) Console.Echo(pyEngine.Operations.Format(output));
             ShowResults();
         }
 

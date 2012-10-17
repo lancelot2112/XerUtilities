@@ -44,10 +44,18 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
+    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -99,10 +107,11 @@
   <ItemGroup>
     <Compile Include="Common\MathLib.cs" />
     <Compile Include="Common\ConvertUnits.cs" />
-    <Compile Include="Common\CyclicMath.cs" />
-    <Compile Include="Common\Quad.cs" />
+    <Compile Include="Rendering\Quad.cs" />
     <Compile Include="DataStructures\BatchRemovalCollection.cs" />
+    <Compile Include="DataStructures\Parallel\ConcurrentPriorityQueue.cs" />
     <Compile Include="DataStructures\ObjectPool.cs" />
+    <Compile Include="DataStructures\Parallel\ConcurrentSerialQueue.cs" />
     <Compile Include="Debugging\Console.cs" />
     <Compile Include="Debugging\DebugResourceManager.cs" />
     <Compile Include="Debugging\DebugManager.cs" />
@@ -114,11 +123,12 @@
     <Compile Include="Debugging\TimeRuler.cs" />
     <Compile Include="Input\XerInput.cs" />
     <Compile Include="Input\XerKeyboardKeys.cs" />
+    <Compile Include="Rendering\BoundingBoxRenderer.cs" />
+    <Compile Include="Rendering\BoundingFrustumRenderer.cs" />
     <Compile Include="Rendering\Camera2D.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\DeltaFreeCamera.cs" />
     <Compile Include="Rendering\PrimitiveBatch.cs" />
-    <Compile Include="Scripting\AttrLuaFunc.cs" />
     <Compile Include="Scripting\IronPythonHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

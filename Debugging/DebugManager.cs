@@ -32,7 +32,7 @@ namespace XerUtilities.Debugging
         /// <summary>
         /// Gets the FpsCounter for the system.
         /// </summary>
-        public DebugDisplay FpsCounter { get; private set; }
+        public DebugDisplay DebugDisplay { get; private set; }
 
         /// <summary>
         /// Gets the TimeRuler for the system.
@@ -56,11 +56,13 @@ namespace XerUtilities.Debugging
             Console = new Console(game, luaConsole);
             game.Components.Add(Console);
 
-            FpsCounter = new DebugDisplay(game);
-            game.Components.Add(FpsCounter);
+            DebugDisplay = new DebugDisplay(game);
+            game.Components.Add(DebugDisplay);
 
             TimeRuler = new TimeRuler(game);
             game.Components.Add(TimeRuler);
+
+            Logger.Initialize(game);
         }
     }
 }

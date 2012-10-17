@@ -14,11 +14,11 @@ namespace XerUtilities.Rendering
         public Matrix Projection;
         public BoundingFrustum ViewFrustum;
 
-        protected XerInput m_input;
+        protected XerInput _input;
 
         public Camera(XerInput input, GraphicsDevice device, float fieldOfView, float nearClip, float farClip)
         {
-            this.m_input = input;
+            this._input = input;
             this.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), device.Viewport.AspectRatio, nearClip, farClip);
         }
 

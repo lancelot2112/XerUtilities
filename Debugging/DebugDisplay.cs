@@ -54,6 +54,8 @@ namespace XerUtilities.Debugging
         // stringBuilder for FPS counter draw.
         private StringBuilder stringBuilder = new StringBuilder(16);
 
+        private Dictionary<int, string> newLines = new Dictionary<int,string>();
+
         #endregion
 
         #region Initialize
@@ -133,8 +135,7 @@ namespace XerUtilities.Debugging
                 stringBuilder.Append("FPS: ");
                 stringBuilder.AppendNumber(Fps);
                 stringBuilder.AppendLine();
-                stringBuilder.Append("Memory: ");
-                stringBuilder.AppendNumber(GC.GetTotalMemory(false));
+                stringBuilder.Append("Memory: " + ((float)GC.GetTotalMemory(false) / (float)1048576).ToString());
                 stringBuilder.AppendLine();
                 stringBuilder.Append("GEN 0: ");
                 stringBuilder.AppendNumber(GC.CollectionCount(0));
@@ -144,7 +145,19 @@ namespace XerUtilities.Debugging
                 stringBuilder.AppendLine();
                 stringBuilder.Append("GEN 2: ");
                 stringBuilder.AppendNumber(GC.CollectionCount(2));
+
+                foreach (KeyValuePair<int, string> kvp in newLines)
+                {
+                    stringBuilder.AppendLine();
+                    stringBuilder.Append(kvp.Value);
+                }
             }
+        }
+
+        public void AddLine(int index, string info)
+        {
+            if (newLines.ContainsKey(index)) newLines[index] = info;
+            else newLines.Add(index, info);
         }
 
         public override void Draw(GameTime gameTime)
@@ -153,6 +166,8 @@ namespace XerUtilities.Debugging
 
             SpriteBatch spriteBatch = debugManager.SpriteBatch;
             SpriteFont font = debugManager.DebugFont;
+
+
 
             // Compute size of border area.
             Vector2 size = font.MeasureString(stringBuilder);

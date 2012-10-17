@@ -114,11 +114,17 @@ namespace XerUtilities.Input
         public bool SpaceReleased { get { return prevKeyboardState.IsKeyDown(Keys.Space) && currKeyboardState.IsKeyUp(Keys.Space); } }
 
         public bool F1JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F1) && currKeyboardState.IsKeyDown(Keys.F1); } }
-
-        public bool F2JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F2) && currKeyboardState.IsKeyDown(Keys.F2); } }
-  
+        public bool F2JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F2) && currKeyboardState.IsKeyDown(Keys.F2); } }  
         public bool F3JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F3) && currKeyboardState.IsKeyDown(Keys.F3); } }
-
+        public bool F4JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F4) && currKeyboardState.IsKeyDown(Keys.F4); } }
+        public bool F5JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F5) && currKeyboardState.IsKeyDown(Keys.F5); } }
+        public bool F6JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F6) && currKeyboardState.IsKeyDown(Keys.F6); } }
+        public bool F7JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F7) && currKeyboardState.IsKeyDown(Keys.F7); } }
+        public bool F8JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F8) && currKeyboardState.IsKeyDown(Keys.F8); } }
+        public bool F9JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F9) && currKeyboardState.IsKeyDown(Keys.F9); } }
+        public bool F10JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F10) && currKeyboardState.IsKeyDown(Keys.F10); } }
+        public bool F11JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F11) && currKeyboardState.IsKeyDown(Keys.F11); } }
+        public bool F12JustPressed { get { return prevKeyboardState.IsKeyUp(Keys.F12) && currKeyboardState.IsKeyDown(Keys.F12); } }
         //States
         public KeyboardState PreviousState { get { return prevKeyboardState; } }
         public KeyboardState CurrentState { get { return currKeyboardState; } }

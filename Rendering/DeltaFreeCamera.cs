@@ -10,22 +10,22 @@ namespace XerUtilities.Rendering
 {
     public class DeltaFreeCamera : Camera
     {
-        private Quaternion m_rotation;
-        private Vector3 m_translation;
-        public Matrix InverseTranslation;
+        private Quaternion _rotation;
+        public Matrix _rotationMat;
+        public Vector3 Translation;
 
         public float TranslationSpeed;
         public float RotationSpeed;
 
-        public DeltaFreeCamera(XerInput input, GraphicsDevice device, Vector3 initialOffset = default(Vector3), float fieldOfView = MathHelper.PiOver4, float nearClip = .01f, float farClip = 10000f, float translateSpeed = 2f, float rotationSpeed = 0.1f)
+        public DeltaFreeCamera(XerInput input, GraphicsDevice device, Vector3 initialOffset = default(Vector3), float fieldOfView = MathHelper.PiOver4, float nearClip = .1f, float farClip = 10000f, float translateSpeed = 25f, float rotationSpeed = .1f)
             : base(input, device, fieldOfView, nearClip, farClip)
         {
             TranslationSpeed = translateSpeed;
             RotationSpeed = rotationSpeed;
 
-            m_rotation = Quaternion.Identity;
-            m_translation = initialOffset;
-            InverseTranslation = Matrix.Identity;
+            _rotation = Quaternion.Identity;
+            _rotationMat = Matrix.Identity;
+            Translation = initialOffset;
 
             CalculateMatrices();
         }
@@ -33,42 +33,44 @@ namespace XerUtilities.Rendering
         {
             HandleUserInput(dt);
             CalculateMatrices();
+            CalculateFrustum();
         }
 
         private void CalculateMatrices()
         {
-            Matrix rotation = Matrix.CreateFromQuaternion(m_rotation);
+            _rotationMat = Matrix.CreateFromQuaternion(_rotation);
 
-            m_translation = Vector3.Transform(m_translation, rotation);
-            Matrix translation;
-            Matrix.CreateTranslation(ref m_translation, out translation);
-            Matrix.Invert(ref translation, out InverseTranslation);
+            Translation = Vector3.Transform(Translation, _rotationMat);
 
-            Vector3 forward = Vector3.Transform(Vector3.Forward, rotation);
-            Vector3 up = Vector3.Transform(Vector3.Up, rotation);
+            Vector3 forward = Vector3.Transform(Vector3.Forward, _rotationMat);
+            Vector3 up = Vector3.Transform(Vector3.Up, _rotationMat);
 
             View = Matrix.CreateLookAt(Vector3.Zero, forward, up);
         }
 
+        private void CalculateFrustum()
+        {
+            ViewFrustum = new BoundingFrustum(View * Projection);
+        }
+
         private void HandleUserInput(float dt)
         {
-            m_translation = Vector3.Zero;
+            Translation = Vector3.Zero;
 
-            float deltaX = -m_input.Mouse.DeltaX;
-            float deltaY = -m_input.Mouse.DeltaY;
-            float roll = 0;
-            if (m_input.Keyboard.APressedAndHeld) roll += 5;
-            if (m_input.Keyboard.DPressedAndHeld) roll -= 5;
+            float deltaX = -_input.Mouse.DeltaX;
+            float deltaY = -_input.Mouse.DeltaY;
             float scale = RotationSpeed * dt;
 
-            m_rotation = Quaternion.Multiply(m_rotation, Quaternion.CreateFromYawPitchRoll(deltaX * scale, deltaY * scale, roll * scale));
+            _rotation = Quaternion.Multiply(Quaternion.CreateFromAxisAngle(Vector3.Up,deltaX * scale),Quaternion.Multiply(_rotation, Quaternion.CreateFromYawPitchRoll(0, deltaY * scale,0)));
+            _rotation.Normalize();
+            //m_rotationMat = Matrix.Multiply(Matrix.CreateFromYawPitchRoll(deltaX * scale, deltaY * scale, 0.0f),m_rotationMat);
 
-            if (m_input.Keyboard.QPressedAndHeld) m_translation += Vector3.Left;
-            if (m_input.Keyboard.WPressedAndHeld) m_translation += Vector3.Forward;
-            if (m_input.Keyboard.EPressedAndHeld) m_translation += Vector3.Right;
-            if (m_input.Keyboard.SPressedAndHeld) m_translation += Vector3.Backward;
-            if (m_input.Keyboard.SpacePressedAndHeld) m_translation += m_input.Keyboard.ShiftPressed ? Vector3.Down : Vector3.Up;
-            m_translation = m_translation * TranslationSpeed * dt;
+            if (_input.Keyboard.QPressedAndHeld) Translation += Vector3.Left;
+            if (_input.Keyboard.WPressedAndHeld) Translation += Vector3.Forward;
+            if (_input.Keyboard.EPressedAndHeld) Translation += Vector3.Right;
+            if (_input.Keyboard.SPressedAndHeld) Translation += Vector3.Backward;
+            if (_input.Keyboard.SpacePressedAndHeld) Translation += _input.Keyboard.ShiftPressed ? Vector3.Down : Vector3.Up;
+            Translation = Translation * TranslationSpeed * dt;
         }
     }
 }

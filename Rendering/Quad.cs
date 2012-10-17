@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace XerUtilities.Common
+namespace XerUtilities.Rendering
 {
     public class Quad
     {
@@ -27,7 +27,6 @@ namespace XerUtilities.Common
         {
             this.Device = device;
         }
-
         
         private void CreateQuad()
         {
