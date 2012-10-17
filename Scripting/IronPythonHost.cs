@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Dynamic;
-using IronPython.Hosting;
-using Microsoft.Scripting.Hosting;
-using IronPython.Modules;
+﻿using System.Dynamic;
 using System.IO;
-using XerUtilities.Debugging;
+using System.Text;
+
 using Microsoft.Scripting;
-using Microsoft.CSharp.RuntimeBinder;
+using Microsoft.Scripting.Hosting;
+
+using IronPython.Hosting;
+using IronPython.Modules;
+
+using XerUtilities.Debugging;
 
 namespace XerUtilities.Scripting
 {
