@@ -53,7 +53,7 @@ namespace XerUtilities.Debugging
             DebugResourceManager = new DebugResourceManager(game, debugFont);
             game.Components.Add(DebugResourceManager);
 
-            Console = new Console(game, luaConsole);
+            Console = new Console(game, DebugResourceManager, luaConsole);
             game.Components.Add(Console);
 
             DebugDisplay = new DebugDisplay(game);

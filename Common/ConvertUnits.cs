@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace FarseerPhysics.SamplesFramework
+namespace XerUtilites.Common
 {
     /// <summary>
     /// Convert units between display and simulation units.

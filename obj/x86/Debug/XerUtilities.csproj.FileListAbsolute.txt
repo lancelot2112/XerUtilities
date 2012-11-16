@@ -1,6 +1,6 @@
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\XerUtilities.dll
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\bin\x86\Debug\XerUtilities.pdb
-C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.dll
 C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.pdb
+C:\Users\Lancer\Dropbox\Projects\XerUtilities\obj\x86\Debug\XerUtilities.csprojResolveAssemblyReference.cache

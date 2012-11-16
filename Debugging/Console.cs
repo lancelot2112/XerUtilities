@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using XerUtilities.Input;
 using XerUtilities.Scripting;
+using System.IO;
 
 
 namespace XerUtilities.Debugging
@@ -102,7 +103,12 @@ namespace XerUtilities.Debugging
         private StringBuilder commandLine = new StringBuilder();
         private int cursorIndex = 0;
 
-        private Queue<string> lines = new Queue<string>();
+        private int numOfLines = 0;
+        private int linesLastIndex = 0;
+        private int currentScrollValue = 0;
+        private int renderStartIndex = 0;
+        private int maxLinesInMemory = 20000;
+        private string[] lines;
 
         // Command history buffer.
         private List<string> commandHistory = new List<string>();
@@ -133,27 +139,33 @@ namespace XerUtilities.Debugging
         private float cursorBlinkTimer;
         #endregion
 
-        #region LUA
+        #region Python
         private bool usingPython;
         private IronPythonHost pyHost;
         #endregion
 
-        DebugResourceManager debugManager;
+        DebugResourceManager debugResources;
 
         #endregion
 
         #region Initialization
-        public Console(Game game,bool isUsingPython)
+        public Console(Game game,DebugResourceManager resources, bool isUsingPython)
             : base(game)
         {
             // Set defaults.
             Prompt = DefaultPrompt + " ";
+
+            // Set manager
+            debugResources = resources;
 
             // Add this instance as a service.
             Game.Services.AddService(typeof(IConsoleHost), this);
 
             // Draw the command UI on top of everything
             DrawOrder = int.MaxValue;
+
+            //Initiate the array to hold the console view
+            lines = new string[maxLinesInMemory];
 
             Echo(">>> Xna Console v0.5 <<<");
             Echo("");
@@ -181,7 +193,7 @@ namespace XerUtilities.Debugging
                 RegisterCommand("cls", "Clear console.",
                 delegate(IConsoleHost host, string command, IList<string> args)
                 {
-                    lines.Clear();
+                    linesLastIndex = 0;
                 });
 
                 // Echo command
@@ -196,22 +208,7 @@ namespace XerUtilities.Debugging
                 pyHost = new IronPythonHost(this);
             }
             
-        }
-
-        /// <summary>
-        /// Initialize component
-        /// </summary>
-        public override void Initialize()
-        {
-            debugManager =
-                Game.Services.GetService(typeof(DebugResourceManager)) as DebugResourceManager;
-
-            if (debugManager == null)
-                throw new InvalidOperationException("Coudn't find DebugManager.");
-
-            base.Initialize();
-        }
-        
+        }     
 
         #endregion
 
@@ -319,9 +316,48 @@ namespace XerUtilities.Debugging
 
         public void Echo(ConsoleMessage messageType, string text)
         {
-            lines.Enqueue(text);
-            while (lines.Count >= MaxLineCount)
-                lines.Dequeue();
+            string[] buffer = text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+            string[] substringBuffer;
+            int ind = linesLastIndex % maxLinesInMemory;
+            int drawWidth = Game.Window.ClientBounds.Width-10;
+            int j;
+            
+            //Get the starting index to begin writing.  If we already have the maximum number of lines
+            //in memory begin overwriting at the start index.
+
+            for (int i = 0; i<buffer.Length; i++)
+            {
+                if (debugResources.DebugFont.MeasureString(buffer[i]).X > drawWidth)
+                {
+                    substringBuffer = WrapText(buffer[i], drawWidth);
+                    for (j = 0; j < substringBuffer.Length; j++)
+                    {
+                        lines[ind] = substringBuffer[j];
+                        linesLastIndex++;
+                        ind = linesLastIndex % maxLinesInMemory;
+                        numOfLines++;
+                    }
+                }
+                else
+                {
+                    lines[ind] = buffer[i];
+                    linesLastIndex++;
+                    ind = linesLastIndex % maxLinesInMemory;
+                    numOfLines++;
+                }                
+            }
+
+            renderStartIndex = linesLastIndex - MaxLineCount;
+            linesLastIndex %= maxLinesInMemory;            
+            if (numOfLines >= maxLinesInMemory)
+            {
+                numOfLines = maxLinesInMemory;
+                if (renderStartIndex < 0) renderStartIndex += maxLinesInMemory;
+            }
+            else if (renderStartIndex < 0)
+            {
+                renderStartIndex = 0;
+            }
 
             // Call registered listeners.
             foreach (IEchoListener listner in listeners)
@@ -365,7 +401,7 @@ namespace XerUtilities.Debugging
         }
         public void Clear()
         {
-            lines.Clear();
+            linesLastIndex = 0;
         }
         #endregion
 
@@ -463,24 +499,31 @@ namespace XerUtilities.Debugging
             rect.X = (int)consolePixelsFromLeft;
             rect.Y = (int)consolePixelsFromTop;
             rect.Width = (int)(windowWidth);
-            rect.Height = (int)(MaxLineCount * debugManager.DebugFont.LineSpacing);
+            rect.Height = (int)(MaxLineCount * debugResources.DebugFont.LineSpacing);
 
             Matrix mtx = Matrix.CreateTranslation(
                         new Vector3(0, -rect.Height * (1.0f - stateTransition), 0));
 
-            debugManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, mtx);
+            debugResources.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, mtx);
 
-            debugManager.SpriteBatch.Draw(debugManager.WhiteTexture, rect, new Color(0, 0, 0, 200));
+            debugResources.SpriteBatch.Draw(debugResources.WhiteTexture, rect, new Color(0, 0, 0, 200));
 
             //Draw 
 
 
             // Draw each of the stored lines 3 pixels from the left of the console.
             Vector2 pos = new Vector2(consolePixelsFromLeft+=3, consolePixelsFromTop);
-            foreach (string line in lines)
+
+            //Get the number of lines to render
+            int linesToRender = Math.Min(numOfLines, MaxLineCount);
+            //Find which index the rendering should start based on the start index and scroll value
+            int renderStart = renderStartIndex - currentScrollValue;
+            if (renderStart < 0) renderStart += maxLinesInMemory;
+            //Loop over values found and draw each string
+            for (int i = renderStart; i < renderStart + linesToRender; i++)
             {
-                debugManager.SpriteBatch.DrawString(debugManager.DebugFont, line, pos, Color.White);
-                pos.Y += debugManager.DebugFont.LineSpacing;
+                debugResources.SpriteBatch.DrawString(debugResources.DebugFont, lines[i % maxLinesInMemory], pos, Color.White);
+                pos.Y += debugResources.DebugFont.LineSpacing;
             }
 
             // Draw prompt string.
@@ -488,7 +531,7 @@ namespace XerUtilities.Debugging
             string leftPart = Prompt + commandLine.ToString();
 
             // Draw the display string to the window
-            debugManager.SpriteBatch.DrawString(debugManager.DebugFont,
+            debugResources.SpriteBatch.DrawString(debugResources.DebugFont,
                 String.Format("{0}{1}", Prompt, commandLine.ToString()), pos, Color.White);
 
             // Cursor blink timer is incremented in update method
@@ -498,17 +541,17 @@ namespace XerUtilities.Debugging
                 // Get the substring of the display string before the cursor
                 string subString = leftPart.Substring(0,leftPart.Length-(leftPart.Length-Prompt.Length - cursorIndex));
                 // Find the length of that substring in pixels to determine the cursor position on screen
-                Vector2 cursorPos = pos + debugManager.DebugFont.MeasureString(subString);
+                Vector2 cursorPos = pos + debugResources.DebugFont.MeasureString(subString);
                 // Set the y position of the cursor
                 cursorPos.Y = pos.Y;           
 
                 // Draw the cursor to the screen
-                debugManager.SpriteBatch.DrawString(debugManager.DebugFont, new string(Cursor, 1), cursorPos, Color.White);
+                debugResources.SpriteBatch.DrawString(debugResources.DebugFont, new string(Cursor, 1), cursorPos, Color.White);
 
             }
 
             // End the sprite batch operation
-            debugManager.SpriteBatch.End();
+            debugResources.SpriteBatch.End();
         }
         #endregion
 
@@ -588,6 +631,15 @@ namespace XerUtilities.Debugging
                         case Keys.Escape:
                             Hide();
                             break;
+                        case Keys.PageUp:
+                            currentScrollValue += MaxLineCount;
+                            int val = Math.Max(numOfLines - MaxLineCount, 0);
+                            if (currentScrollValue > val) currentScrollValue = val;
+                            break;
+                        case Keys.PageDown:
+                            currentScrollValue -= MaxLineCount;
+                            if (currentScrollValue < 0) currentScrollValue = 0;
+                            break;
                     }//End switch
                 }//End if
             }//End foreach
@@ -619,6 +671,35 @@ namespace XerUtilities.Debugging
 
             // Else return false
             return pressed;
+        }
+
+        private string[] WrapText(string text, int maxLineWidth)
+        {
+            string[] words = text.Split(' ');
+
+            StringBuilder sb = new StringBuilder();
+
+            float lineWidth = 0f;
+
+            float spaceWidth = debugResources.DebugFont.MeasureString(" ").X;
+
+            foreach (string word in words)
+            {
+                Vector2 size = debugResources.DebugFont.MeasureString(word);
+
+                if (lineWidth + size.X < maxLineWidth)
+                {
+                    sb.Append(word + " ");
+                    lineWidth += size.X + spaceWidth;
+                }
+                else
+                {
+                    sb.Append("\n" + word + " ");
+                    lineWidth = size.X + spaceWidth;
+                }
+            }
+
+            return sb.ToString().Split(new string[]{"\n"},StringSplitOptions.None);
         }
         #endregion
 

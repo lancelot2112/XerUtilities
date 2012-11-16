@@ -20,7 +20,7 @@ namespace XerUtilities.Debugging
     /// <summary>
     /// DebugResourceManager class that holds graphics resources for debug
     /// </summary>
-    public class DebugResourceManager : DrawableGameComponent
+    public class DebugResourceManager : IGameComponent
     {
         // the name of the font to load
         private string debugFont;
@@ -47,32 +47,27 @@ namespace XerUtilities.Debugging
         #region Initialize
 
         public DebugResourceManager(Game game, string debugFont)
-            : base(game)
         {
             // Added as a Service.
-            Game.Services.AddService(typeof(DebugResourceManager), this);
+            game.Services.AddService(typeof(DebugResourceManager), this);
             Logger.Initialize(game);
             this.debugFont = debugFont;
 
-            // This component doesn't need to call neither update nor draw.
-            this.Enabled = false;
-            this.Visible = false;
-        }
-
-        protected override void LoadContent()
-        {
             // Load debug content.
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(game.GraphicsDevice);
 
-            DebugFont = Game.Content.Load<SpriteFont>(debugFont);
+            DebugFont = game.Content.Load<SpriteFont>(debugFont);
 
             // Create white texture.
-            WhiteTexture = new Texture2D(GraphicsDevice, 1, 1);
+            WhiteTexture = new Texture2D(game.GraphicsDevice, 1, 1);
             Color[] whitePixels = new Color[] { Color.White };
             WhiteTexture.SetData<Color>(whitePixels);
-
-            base.LoadContent();
         }
+
+        public void Initialize()
+        {
+        }
+
 
         #endregion
     }
