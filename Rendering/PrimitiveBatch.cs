@@ -6,7 +6,7 @@ namespace XerUtilities.Rendering
 {
     public class PrimitiveBatch : IDisposable
     {
-        private const int DefaultBufferSize = 500;
+        private const int DefaultBufferSize = 2048;
 
         // a basic effect, which contains the shaders that we will use to draw our
         // primitives.
@@ -141,7 +141,8 @@ namespace XerUtilities.Rendering
                 {
                     FlushTriangles();
                 }
-                _triangleVertices[_triangleVertsCount].Position = new Vector3(vertex, -0.0f);
+                _triangleVertices[_triangleVertsCount].Position.X = vertex.X;
+                _triangleVertices[_triangleVertsCount].Position.Y = vertex.Y;
                 _triangleVertices[_triangleVertsCount].Color = color;
                 _triangleVertsCount++;
             }
@@ -151,12 +152,63 @@ namespace XerUtilities.Rendering
                 {
                     FlushLines();
                 }
-                _lineVertices[_lineVertsCount].Position = new Vector3(vertex, 0f);
+                _lineVertices[_lineVertsCount].Position.X = vertex.X;
+                _lineVertices[_lineVertsCount].Position.Y = vertex.Y;
                 _lineVertices[_lineVertsCount].Color = color;
                 _lineVertsCount++;
             }
         }
 
+        public void AddLine(Vector2 start, Vector2 end, Color color)
+        {
+            if (_lineVertsCount >= _lineVertices.Length - 2) FlushLines();
+
+            _lineVertices[_lineVertsCount].Position.X = start.X;
+            _lineVertices[_lineVertsCount].Position.Y = start.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = end.X;
+            _lineVertices[_lineVertsCount].Position.Y = end.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+        }
+
+        public void AddSquare(Vector2 min, Vector2 max, Color color)
+        {
+            if (_lineVertsCount >= _lineVertices.Length - 8) FlushLines();
+
+            _lineVertices[_lineVertsCount].Position.X = min.X;
+            _lineVertices[_lineVertsCount].Position.Y = min.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = min.X;
+            _lineVertices[_lineVertsCount].Position.Y = max.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = min.X;
+            _lineVertices[_lineVertsCount].Position.Y = min.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = max.X;
+            _lineVertices[_lineVertsCount].Position.Y = min.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = max.X;
+            _lineVertices[_lineVertsCount].Position.Y = max.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = max.X;
+            _lineVertices[_lineVertsCount].Position.Y = min.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = max.X;
+            _lineVertices[_lineVertsCount].Position.Y = max.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+            _lineVertices[_lineVertsCount].Position.X = min.X;
+            _lineVertices[_lineVertsCount].Position.Y = max.Y;
+            _lineVertices[_lineVertsCount++].Color = color;
+
+        }
 
         /// <summary>
         /// End is called once all the primitives have been drawn using AddVertex.

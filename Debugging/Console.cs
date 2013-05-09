@@ -170,11 +170,10 @@ namespace XerUtilities.Debugging
             Echo(">>> Xna Console v0.5 <<<");
             Echo("");
             this.usingPython = isUsingPython;
-            if (!usingPython)
-            {
-                // Adding default commands
-                // Help command displays registered command information.
-                RegisterCommand("help", "Show command descriptions.",
+
+            // Adding default commands
+            // Help command displays registered command information.
+            RegisterCommand("help", "Show command descriptions.",
                 delegate(IConsoleHost host, string command, IList<string> args)
                 {
                     int maxLen = 0;
@@ -189,23 +188,30 @@ namespace XerUtilities.Debugging
                     }
                 });
 
-                // Clear screen command
-                RegisterCommand("cls", "Clear console.",
+            // Clear screen command
+            RegisterCommand("cls", "Clear console.",
                 delegate(IConsoleHost host, string command, IList<string> args)
                 {
-                    linesLastIndex = 0;
+                    Clear();
                 });
 
-                // Echo command
-                RegisterCommand("echo", "Display messages.",
+            // Echo command
+            RegisterCommand("echo", "Display messages.",
                 delegate(IConsoleHost host, string command, IList<string> args)
                 {
                     Echo(command.Substring(5));
                 });
-            }
-            else
+
+            if(usingPython)
             {
                 pyHost = new IronPythonHost(this);
+
+                // Directory command
+                RegisterCommand("pyDir", "List loaded objects.",
+                    delegate(IConsoleHost host, string command, IList<string> args)
+                    {
+                        pyHost.Directory();
+                    });
             }
             
         }     
@@ -254,46 +260,45 @@ namespace XerUtilities.Debugging
 
             command = command.TrimStart(spaceChars);
 
-            if (!usingPython)
-            {
-                List<string> args = new List<string>(command.Split(spaceChars));
-                string cmdText = args[0];
-                args.RemoveAt(0);
+            List<string> args = new List<string>(command.Split(spaceChars));
+            string cmdText = args[0];
+            args.RemoveAt(0);
 
-                CommandInfo cmd;
-                if (commandTable.TryGetValue(cmdText.ToLower(), out cmd))
+            CommandInfo cmd;
+            if (commandTable.TryGetValue(cmdText.ToLower(), out cmd))
+            {
+                try
+                {
+                    // Call registered command delegate.
+                    cmd.Callback(this, command, args);
+                }
+                catch (Exception e)
+                {
+                    // Exception occurred while running command.
+                    EchoError("Unhandled Exception occurred");
+
+                    string[] lines = e.Message.Split(new char[] { '\n' });
+                    foreach (string line in lines)
+                        EchoError(line);
+                }
+            }
+            else
+            {
+                if (usingPython)
                 {
                     try
                     {
-                        // Call registered command delegate.
-                        cmd.Callback(this, command, args);
+                        pyHost.ExecutePythonCode(command);
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        // Exception occurred while running command.
-                        EchoError("Unhandled Exception occurred");
-
-                        string[] lines = e.Message.Split(new char[] { '\n' });
-                        foreach (string line in lines)
-                            EchoError(line);
+                        EchoError(ex.Message);
                     }
                 }
                 else
                 {
                     Echo("Unknown Command");
                 }
-            }
-            else
-            {
-                try
-                {
-                    pyHost.ExecutePythonCode(command);
-                }
-                catch (Exception ex)
-                {
-                    EchoError(ex.Message);
-                }
-
             }
 
             // Add to command history.

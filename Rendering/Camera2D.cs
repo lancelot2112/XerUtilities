@@ -23,7 +23,7 @@ namespace XerUtilities.Rendering
         private float maxZoom = 5000.0f;
 
         public Camera2D(GraphicsDevice graphics)
-            : this(graphics, Vector2.Zero, 0.0f, 100.0f) { }
+            : this(graphics, Vector2.Zero, 0.0f, 1000.0f) { }
 
         public Camera2D(GraphicsDevice graphics, Vector2 position, float rotation, float zoom)
         {

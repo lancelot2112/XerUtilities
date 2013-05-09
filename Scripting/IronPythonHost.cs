@@ -1,14 +1,14 @@
-﻿using System.Dynamic;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
 
 using IronPython.Hosting;
-using IronPython.Modules;
 
 using XerUtilities.Debugging;
+
 
 namespace XerUtilities.Scripting
 {
@@ -40,7 +40,7 @@ namespace XerUtilities.Scripting
             ExecutePythonCode("import Microsoft.Xna.Framework.Graphics");
             ExecutePythonCode("from Microsoft.Xna.Framework import *");
             ExecutePythonCode("from Microsoft.Xna.Framework.Graphics import *");
-            SetVariable("Runtime", this);
+            SetVariable("_runtime", this);
             Console.Echo("[HOST] Using IRONPYTHON v2.7.1");
         }
 
@@ -67,6 +67,15 @@ namespace XerUtilities.Scripting
                 string result = Encoding.ASCII.GetString(buff);
                 Console.Echo(result);
                 output.SetLength(0);
+            }
+        }
+
+        public void Directory()
+        {
+            foreach (KeyValuePair<string, dynamic> dyn in pyScope.GetItems())
+            {
+                if(dyn.Value is object)
+                Console.Echo(dyn.Key);
             }
         }
     }
